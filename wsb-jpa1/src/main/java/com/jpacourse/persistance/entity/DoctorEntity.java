@@ -4,6 +4,10 @@ import com.jpacourse.persistance.enums.Specialization;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Set;
+
 @Entity
 @Table(name = "DOCTOR")
 public class DoctorEntity {
@@ -21,6 +25,7 @@ public class DoctorEntity {
 	@Column(nullable = false)
 	private String telephoneNumber;
 
+	@Column(nullable = false)
 	private String email;
 
 	@Column(nullable = false)
@@ -29,6 +34,16 @@ public class DoctorEntity {
 	@Column(nullable = false)
 	@Enumerated(EnumType.STRING)
 	private Specialization specialization;
+
+	// Dwustronna relacja: Doctor jest właścicielem relacji
+	@OneToMany(mappedBy = "doctor")
+	private Set<VisitEntity> visits;
+
+	// Jednostronna relacja: Doctor jest właścicielem relacji
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "address_id", nullable = false)
+	private AddressEntity address;
+
 
 	public Long getId() {
 		return id;

@@ -3,6 +3,8 @@ package com.jpacourse.persistance.entity;
 
 import jakarta.persistence.*;
 
+import javax.print.Doc;
+
 @Entity
 @Table(name = "ADDRESS")
 public class AddressEntity {
@@ -11,13 +13,25 @@ public class AddressEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Column(nullable = false)
 	private String city;
 
+	@Column(nullable = false)
 	private String addressLine1;
 
+	@Column(nullable = true)
 	private String addressLine2;
 
+	@Column(nullable = false)
 	private String postalCode;
+
+	// Dwustronna relacja: Patient jest właścicielem relacji
+	@OneToOne(mappedBy = "address")
+	private PatientEntity patient;
+
+	// Dwustronna relacja: Doctor jest właścicielem relacji
+	@OneToOne(mappedBy = "address")
+	private DoctorEntity doctor;
 
 	public Long getId() {
 		return id;

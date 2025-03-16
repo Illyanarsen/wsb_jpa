@@ -18,6 +18,11 @@ public class MedicalTreatmentEntity {
 	@Enumerated(EnumType.STRING)
 	private TreatmentType type;
 
+	// Jednostronna relacja
+	@ManyToOne
+	@JoinColumn(name = "visit_id", nullable = false)
+	private VisitEntity visit;
+
 	public Long getId() {
 		return id;
 	}
