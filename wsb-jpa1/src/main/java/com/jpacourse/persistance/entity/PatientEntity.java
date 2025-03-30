@@ -1,6 +1,7 @@
 package com.jpacourse.persistance.entity;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,6 +38,11 @@ public class PatientEntity {
 	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "address_id", nullable = false)
 	private AddressEntity address;
+
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "patient_id", nullable = false)
+	private VisitEntity visit;
+
 
 	public Long getId() {
 		return id;
