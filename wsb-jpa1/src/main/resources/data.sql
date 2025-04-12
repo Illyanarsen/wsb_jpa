@@ -3,8 +3,8 @@ INSERT INTO ADDRESS (city, address_Line1, address_Line2, postal_Code) VALUES
                                                                            ('Wroclaw', 'ul. Kwiatowa 5', NULL, '50-500'),
                                                                            ('Warsaw', 'ul. Prosta 10', NULL, '00-800');
 -- Dodanie pacjentów
-INSERT INTO PATIENT (first_Name, last_Name, telephone_Number, email, patient_Number, date_Of_Birth, address_id) VALUES
-    ('Jan', 'Kowalski', '123456789', 'jan.kowalski@gmail.com', 'P001', '1985-04-20', 1);
+INSERT INTO PATIENT (first_Name, last_Name, telephone_Number, email, patient_Number, date_Of_Birth, address_id, is_Insured) VALUES
+    ('Jan', 'Kowalski', '123456789', 'jan.kowalski@gmail.com', 'P001', '1985-04-20', 1, 1);
 
 -- Dodanie lekarzy
 INSERT INTO DOCTOR (first_Name, last_Name, telephone_Number, email, doctor_Number, specialization, address_id) VALUES

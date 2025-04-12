@@ -32,6 +32,8 @@ public class PatientEntity {
 
 	@Column(nullable = false)
 	private LocalDate dateOfBirth;
+	@Column(nullable = false)
+	private boolean isInsured;
 
 
 	// Dwustronna relacja: Pacjent jest właścicielem relacji
@@ -39,9 +41,9 @@ public class PatientEntity {
 	@JoinColumn(name = "address_id", nullable = false)
 	private AddressEntity address;
 
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "patient_id", nullable = false)
-	private VisitEntity visit;
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinColumn(name = "patient_id")
+	private List<VisitEntity> visits = new ArrayList<>();
 
 
 	public Long getId() {
@@ -99,5 +101,28 @@ public class PatientEntity {
 	public void setDateOfBirth(LocalDate dateOfBirth) {
 		this.dateOfBirth = dateOfBirth;
 	}
+
+	public AddressEntity getAddress() {
+		return address;
+	}
+
+	public void setAddress(AddressEntity address) {
+		this.address = address;
+	}
+
+	public void addVisit(VisitEntity visit) {
+		visits.add(visit);
+	}
+	public List<VisitEntity> getVisits() {
+		return visits;
+	}
+	public void setIsInsured(boolean isInsured) {
+		this.isInsured = isInsured;
+	}
+
+	public boolean getIsInsured() {
+		return isInsured;
+	}
+
 
 }
