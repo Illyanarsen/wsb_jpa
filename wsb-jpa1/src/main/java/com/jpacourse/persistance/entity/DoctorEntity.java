@@ -36,8 +36,8 @@ public class DoctorEntity {
 	private Specialization specialization;
 
 	// Dwustronna relacja: Doctor jest właścicielem relacji
-	@OneToMany(mappedBy = "doctor")
-	private Set<VisitEntity> visits;
+	@OneToMany(mappedBy = "doctor", cascade = {} , orphanRemoval = false)
+	private List<VisitEntity> visits = new ArrayList<>();
 
 	// Jednostronna relacja: Doctor jest właścicielem relacji
 	@OneToOne(cascade = CascadeType.ALL)
@@ -99,6 +99,13 @@ public class DoctorEntity {
 
 	public void setSpecialization(Specialization specialization) {
 		this.specialization = specialization;
+	}
+	public AddressEntity getAddress() {
+		return address;
+	}
+
+	public void setAddress(AddressEntity address) {
+		this.address = address;
 	}
 
 }

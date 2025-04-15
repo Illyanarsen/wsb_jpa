@@ -10,6 +10,8 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 
 @Repository
 public class PatientDaoImpl extends AbstractDao<PatientEntity, Long> implements PatientDao{
@@ -38,5 +40,43 @@ public class PatientDaoImpl extends AbstractDao<PatientEntity, Long> implements 
         // This will cascade the persist operation to the new visit
         return entityManager.merge(patient);
     }
+
+    @Override
+    public List<PatientEntity> findByLastName(String pPatientLastName) {
+        return entityManager.createQuery(" select patient from PatientEntity patient " +
+                " where patient.lastName like :param1" , PatientEntity.class)
+                .setParameter("param1", "%"+pPatientLastName+"%").getResultList();
+    }
+
+    @Override
+    public List<VisitEntity> findPatientVisits(Long pPatientId) {
+        PatientEntity patient = entityManager.find(PatientEntity.class, pPatientId);
+        if (patient != null) {
+            return patient.getVisits(); // Returns the list of visits
+        }
+        return Collections.emptyList(); // Return empty list if patient not found
+    }
+
+    @Override
+    public List<PatientEntity> MoreVisitsThan(Integer minVisits) {
+        return entityManager.createQuery(
+                        "SELECT p FROM PatientEntity p " +
+                                "JOIN p.visits v " +  // Join with visits
+                                "GROUP BY p.id " +     // Group by patient
+                                "HAVING COUNT(v) > :minVisits", // Filter by visit count
+                        PatientEntity.class)
+                .setParameter("minVisits", minVisits)
+                .getResultList();
+    }
+
+    @Override
+    public List<PatientEntity> findByInsurance(Long patientId) {
+        return entityManager.createQuery(
+                        "SELECT p FROM PatientEntity p " +
+                                "WHERE p.isInsured = true",
+                        PatientEntity.class)
+                .getResultList();
+    }
+
 
 }

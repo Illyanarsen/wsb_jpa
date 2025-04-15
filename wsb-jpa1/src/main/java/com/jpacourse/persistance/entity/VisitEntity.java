@@ -20,7 +20,10 @@ public class VisitEntity {
 	private LocalDateTime time;
 
 	// Dwustronna relacja: Doctor jest właścicielem relacji
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST,
+			CascadeType.MERGE,
+			CascadeType.REFRESH,
+			CascadeType.DETACH})
 	@JoinColumn(name = "doctor_id", nullable = false) // Klucz obcy do DOCTOR
 	private DoctorEntity doctor;
 
