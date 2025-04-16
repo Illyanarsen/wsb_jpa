@@ -1,4 +1,5 @@
 package com.jpacourse.service.impl;
+import com.jpacourse.dto.VisitTO;
 import com.jpacourse.persistance.dao.Dao;
 import com.jpacourse.persistance.dao.DoctorDao;
 import com.jpacourse.persistance.dao.PatientDao;
@@ -20,6 +21,9 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -43,8 +47,8 @@ class PatientServiceImplTest {
 
     private PatientEntity testPatient;
     private VisitEntity testVisit;
+    private VisitEntity testVisit2;
     private DoctorEntity testDoctor;
-    private Long doctorId;
 
     @BeforeEach
     void setUp() {
@@ -84,6 +88,17 @@ class PatientServiceImplTest {
         testVisit.setDoctor(testDoctor);
         testPatient.addVisit(testVisit);
         visitDao.save(testVisit);
+        patientDao.save(testPatient);
+
+
+        // Create and save Visit
+        testVisit2 = new VisitEntity();
+        testVisit2.setTime(LocalDateTime.now());
+        testVisit2.setDescription("Regular checkup");
+        testVisit2.setDoctor(testDoctor);
+        testPatient.addVisit(testVisit2);
+        visitDao.save(testVisit2);
+        patientDao.save(testPatient);
 
         em.flush();
     }
@@ -91,15 +106,32 @@ class PatientServiceImplTest {
     @Test
     public void testShouldFindPatientById() {
         // given
-        Long existingPatientId = 1L; // Assuming this ID exists in your test data
+        Long existingPatientId = testPatient.getId();
 
         // when
         PatientTO patientTO = patientService.findById(existingPatientId);
 
         // then
         assertThat(patientTO).isNotNull();
-        assertThat(patientTO.getFirstName()).isEqualTo("Jan"); // Replace with actual expected value
-        assertThat(patientTO.getLastName()).isEqualTo("Kowalski"); // Replace with actual expected value
+        assertThat(patientTO.getFirstName()).isEqualTo("Jan");
+        assertThat(patientTO.getLastName()).isEqualTo("Kowalski");
+    }
+
+    @Test
+    public void testShouldReturnAllVisits(){
+        // Given
+        Long existingPatientId = testPatient.getId();
+
+        PatientTO patientTO = patientService.findById(existingPatientId);
+        List<Long> visitIds = patientTO.getVisits().stream()
+                .map(VisitTO::getId)
+                .toList();
+
+        // Then
+        assertThat(patientTO).isNotNull();
+        assertThat(visitIds).contains(testVisit.getId());
+        assertThat(visitIds).contains(testVisit2.getId());
+
     }
 
     @Test
@@ -117,14 +149,14 @@ class PatientServiceImplTest {
     @Test
     public void testShouldReturnPatientWithAddress() {
         // given
-        Long patientIdWithAddress = 1L; // Assuming this patient has an address
+        Long patientIdWithAddress = testPatient.getId();
 
         // when
         PatientTO patientTO = patientService.findById(patientIdWithAddress);
 
         // then
         assertThat(patientTO.getAddress()).isNotNull();
-        assertThat(patientTO.getAddress().getCity()).isEqualTo("Wroclaw"); // Replace with actual expected value
+        assertThat(patientTO.getAddress().getCity()).isEqualTo("Wroclaw");
     }
 
     @Test
@@ -132,12 +164,12 @@ class PatientServiceImplTest {
         // Given
         Long patientId = testPatient.getId();
         Long visitId = testVisit.getId();
-        Long doctorId = testVisit.getId();
+        Long doctorId = testDoctor.getId();
 
         // When
         patientService.deletePatientWithCascade(patientId);
 
-        // Then - Using repository methods
+        // Then
         assertThat(patientDao.findOne(patientId)).isNull();
         assertThat(visitDao.findOne(visitId)).isNull();
         assertThat(doctorDao.findOne(doctorId)).isNotNull();

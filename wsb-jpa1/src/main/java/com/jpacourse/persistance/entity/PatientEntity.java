@@ -2,10 +2,13 @@ package com.jpacourse.persistance.entity;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 @Entity
 @Table(name = "PATIENT")
@@ -41,11 +44,25 @@ public class PatientEntity {
 	@JoinColumn(name = "address_id", nullable = false)
 	private AddressEntity address;
 
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+	@Fetch(FetchMode.SELECT)
 	@JoinColumn(name = "patient_id")
 	private List<VisitEntity> visits = new ArrayList<>();
 
+	@Transient  // Marks this as a non-persistent field
+	private Integer age;
 
+	@PostLoad  // Calculates age automatically after loading from DB
+	private void calculateAge() {
+		if (this.dateOfBirth != null) {
+			this.age = Period.between(this.dateOfBirth, LocalDate.now()).getYears();
+		}
+	}
+
+	public Integer getAge() {
+		return age;
+	}
 	public Long getId() {
 		return id;
 	}

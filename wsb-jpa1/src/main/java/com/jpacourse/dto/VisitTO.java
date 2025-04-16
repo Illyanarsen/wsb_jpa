@@ -12,7 +12,7 @@ public class VisitTO {
 
     private LocalDateTime time;
 
-    private DoctorEntity doctor;
+    private DoctorTO doctor;
     public Long getId() {
         return id;
     }
@@ -34,11 +34,11 @@ public class VisitTO {
     public void setTime(LocalDateTime time) {
         this.time = time;
     }
-    public DoctorEntity getDoctor() {
+    public DoctorTO getDoctor() {
         return doctor;
     }
 
-    public void setDoctor(DoctorEntity doctor) {
+    public void setDoctor(DoctorTO doctor) {
         this.doctor = doctor;
     }
 

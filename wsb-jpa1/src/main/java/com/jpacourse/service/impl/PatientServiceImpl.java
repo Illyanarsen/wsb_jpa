@@ -11,6 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 @Transactional
 public class PatientServiceImpl implements PatientService {
@@ -34,14 +37,11 @@ public class PatientServiceImpl implements PatientService {
         return PatientMapper.mapToTO(entity);
     }
 
-
     public void deletePatientWithCascade(Long patientId) {
         PatientEntity patient = patientDao.findOne(patientId);
         if (patient == null) {
             throw new EntityNotFoundException(patientId);
         }
-
-        // Cascade deletion is handled by JPA due to orphanRemoval=true
         patientDao.delete(patientId);
 
         // Explicit flush to ensure operation completes

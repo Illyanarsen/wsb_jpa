@@ -70,13 +70,15 @@ public class PatientDaoImpl extends AbstractDao<PatientEntity, Long> implements 
     }
 
     @Override
-    public List<PatientEntity> findByInsurance(Long patientId) {
+    public List<PatientEntity> findAdultPatients() {
+        LocalDate adultDate = LocalDate.now().minusYears(18);
         return entityManager.createQuery(
-                        "SELECT p FROM PatientEntity p " +
-                                "WHERE p.isInsured = true",
+                        "SELECT p FROM PatientEntity p WHERE p.dateOfBirth <= :adultDate",
                         PatientEntity.class)
+                .setParameter("adultDate", adultDate)
                 .getResultList();
     }
+
 
 
 }

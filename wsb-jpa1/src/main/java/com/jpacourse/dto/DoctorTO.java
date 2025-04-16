@@ -25,7 +25,7 @@ public class DoctorTO {
 
     private List<VisitEntity> visits = new ArrayList<>();
 
-    private AddressEntity address;
+    private AddressTO address;
 
     public Long getId() {
         return id;
@@ -81,5 +81,12 @@ public class DoctorTO {
 
     public void setSpecialization(Specialization specialization) {
         this.specialization = specialization;
+    }
+    public AddressTO getAddress() {
+        return address;
+    }
+
+    public void setAddress(AddressTO address) {
+        this.address = address;
     }
 }

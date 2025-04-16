@@ -5,6 +5,7 @@ import com.jpacourse.persistance.entity.VisitEntity;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,10 +23,17 @@ public class PatientTO {
     private String patientNumber;
 
     private LocalDate dateOfBirth;
-    private AddressEntity address;
-    private ArrayList<VisitEntity> visits;
+    private AddressTO address;
+    private List<VisitTO> visits = new ArrayList<>();
+    private Integer age;
 
+    public Integer getAge() {
+        return age;
+    }
 
+    public void setAge(Integer age) {
+        this.age = age;
+    }
     public Long getId() {
         return id;
     }
@@ -83,20 +91,21 @@ public class PatientTO {
     }
     private boolean isInsured;
 
-    public AddressEntity getAddress() {
+    public AddressTO getAddress() {
         return address;
     }
 
-    public void setAddress(AddressEntity address) {
+    public void setAddress(AddressTO address) {
         this.address = address;
     }
 
 
-    public void addVisit(VisitEntity visit) {
-        visits.add(visit);
-    }
-    public List<VisitEntity> getVisits() {
+    public List<VisitTO> getVisits() {
         return visits;
+    }
+
+    public void addVisit(VisitTO visit) {
+        this.visits.add(visit);
     }
 
     public void setIsInsured(boolean isInsured) {

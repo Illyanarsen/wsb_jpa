@@ -1,17 +1,22 @@
 package com.jpacourse.mapper;
 
 import com.jpacourse.dto.PatientTO;
+import com.jpacourse.dto.AddressTO;
+import com.jpacourse.dto.VisitTO;
 import com.jpacourse.persistance.entity.PatientEntity;
 import com.jpacourse.persistance.entity.VisitEntity;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class PatientMapper {
-    public static PatientTO mapToTO(final PatientEntity patientEntity)
-    {
-        if (patientEntity == null)
-        {
+
+    public static PatientTO mapToTO(PatientEntity patientEntity) {
+        if (patientEntity == null) {
             return null;
         }
-        final PatientTO patientTO = new PatientTO();
+
+        PatientTO patientTO = new PatientTO();
         patientTO.setId(patientEntity.getId());
         patientTO.setFirstName(patientEntity.getFirstName());
         patientTO.setLastName(patientEntity.getLastName());
@@ -19,22 +24,24 @@ public class PatientMapper {
         patientTO.setEmail(patientEntity.getEmail());
         patientTO.setPatientNumber(patientEntity.getPatientNumber());
         patientTO.setDateOfBirth(patientEntity.getDateOfBirth());
-        patientTO.setAddress(patientEntity.getAddress());
-        patientTO.setIsInsured(patientEntity.getIsInsured());
-        if (patientTO.getVisits() != null) {
-            for (VisitEntity visitTO : patientTO.getVisits()) {
-                patientEntity.addVisit(visitTO);
-            }
-        }
+        patientTO.setAge(patientEntity.getAge());
+
+        // Map Address using AddressMapper
+        patientTO.setAddress(AddressMapper.mapToTO(patientEntity.getAddress()));
+
+        // Map visits using individual addVisit()
+        patientEntity.getVisits().forEach(visit ->
+                patientTO.addVisit(VisitMapper.mapToTO(visit))
+        );
+
         return patientTO;
     }
 
-    public static PatientEntity mapToEntity(final PatientTO patientTO)
-    {
-        if(patientTO == null)
-        {
+    public static PatientEntity mapToEntity(PatientTO patientTO) {
+        if (patientTO == null) {
             return null;
         }
+
         PatientEntity patientEntity = new PatientEntity();
         patientEntity.setId(patientTO.getId());
         patientEntity.setFirstName(patientTO.getFirstName());
@@ -43,13 +50,15 @@ public class PatientMapper {
         patientEntity.setEmail(patientTO.getEmail());
         patientEntity.setPatientNumber(patientTO.getPatientNumber());
         patientEntity.setDateOfBirth(patientTO.getDateOfBirth());
-        patientEntity.setAddress(patientTO.getAddress());
-        patientEntity.setIsInsured(patientTO.getIsInsured());
-        if (patientEntity.getVisits() != null) {
-            for (VisitEntity visit : patientEntity.getVisits()) {
-                patientTO.addVisit(visit);
-            }
-        }
+
+        // Map Address back using AddressMapper
+        patientEntity.setAddress(AddressMapper.mapToEntity(patientTO.getAddress()));
+
+        // Map visits back using individual addVisit()
+        patientTO.getVisits().forEach(visit ->
+                patientEntity.addVisit(VisitMapper.mapToEntity(visit))
+        );
+
         return patientEntity;
     }
 }
