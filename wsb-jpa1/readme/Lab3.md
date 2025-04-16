@@ -28,3 +28,50 @@ i powtorz test i obserwacje. Wnioski zapisz na dole tego pliku i skomituj.
 
 Do wybranej encji dodaj wersjonowanie, oraz napisz test (w DAO) sprawdzajacy rownolegla modyfikacje (OptimisticLock)
 
+
+
+
+1. Dla SELECT:
+
+Pierwsze zapytanie SQL pobiera informacje o pacjencie wraz z jego adresem i lekarzem (poprzez join)
+
+
+    select pe1_0.id, pe1_0.address_id, a1_0.id, a1_0.address_line1, ...
+    from patient pe1_0
+    join address a1_0 on a1_0.id=pe1_0.address_id
+    left join doctor d1_0 on a1_0.id=d1_0.address_id
+    where pe1_0.id=?
+
+
+Oddzielne zapytanie SQL jest wykonywane w celu pobrania wszystkich wizyt dla pacjenta
+
+    
+    select v1_0.patient_id, v1_0.id, v1_0.description, v1_0.doctor_id, v1_0.time
+    from visit v1_0
+    where v1_0.patient_id=?
+
+Charakterystyka zachowania:
+
+To demonstruje problem "N+1", gdzie:
+
+Pierwsze zapytanie jest wykonywane w celu uzyskania pacjenta
+Dodatkowe zapytanie jest wykonywane w celu uzyskania wszystkich wizyt dla tego pacjenta
+
+Wizyty są ładowane w oddzielnej instrukcji SELECT po załadowaniu pacjenta
+
+2. Dla JOIN:
+
+Wykonywane jest tylko jedno zapytanie w celu pobrania pacjenta wraz ze wszystkimi wizytami:
+
+    select pe1_0.id, pe1_0.address_id, ..., v1_0.patient_id, v1_0.id, v1_0.description, v1_0.doctor_id, v1_0.time
+    from patient pe1_0
+    join address a1_0 on a1_0.id=pe1_0.address_id
+    left join doctor d1_0 on a1_0.id=d1_0.address_id
+    left join visit v1_0 on pe1_0.id=v1_0.patient_id
+    where pe1_0.id=?
+
+Zapytanie wykorzystuje LEFT JOIN, aby uwzględnić wszystkie wizyty pacjenta
+Wszystkie powiązane dane (pacjent, adres, lekarz i wizyty) są pobierane w jednym zapytaniu
+
+
+Wnioski: SELECT jest metodą bardziej wydajną, ponieważ wymaga tylko jednego zapytania do pobrania wszystkich potrzebnych informacji

@@ -46,7 +46,7 @@ public class PatientEntity {
 
 
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-	@Fetch(FetchMode.SELECT)
+	@Fetch(FetchMode.JOIN)
 	@JoinColumn(name = "patient_id")
 	private List<VisitEntity> visits = new ArrayList<>();
 

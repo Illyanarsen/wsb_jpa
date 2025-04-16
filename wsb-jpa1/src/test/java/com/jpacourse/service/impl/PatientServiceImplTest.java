@@ -24,12 +24,17 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
 
 @SpringBootTest
 @Transactional
 class PatientServiceImplTest {
+
+    private static final Logger log = LoggerFactory.getLogger(PatientServiceImplTest.class);
 
     @Autowired
     private PatientService patientService;
@@ -49,7 +54,6 @@ class PatientServiceImplTest {
     private VisitEntity testVisit;
     private VisitEntity testVisit2;
     private DoctorEntity testDoctor;
-
     @BeforeEach
     void setUp() {
         // Create and save Address
@@ -108,8 +112,14 @@ class PatientServiceImplTest {
         // given
         Long existingPatientId = testPatient.getId();
 
+        // Clear persistence context to ensure fresh query
+        em.clear();
+        log.debug("===== BEFORE PATIENT FETCH =====");
+
         // when
         PatientTO patientTO = patientService.findById(existingPatientId);
+
+        log.debug("===== AFTER PATIENT FETCH =====");
 
         // then
         assertThat(patientTO).isNotNull();
@@ -131,6 +141,7 @@ class PatientServiceImplTest {
         assertThat(patientTO).isNotNull();
         assertThat(visitIds).contains(testVisit.getId());
         assertThat(visitIds).contains(testVisit2.getId());
+        assertThat(patientTO.getVisits()).hasSize(2);
 
     }
 
