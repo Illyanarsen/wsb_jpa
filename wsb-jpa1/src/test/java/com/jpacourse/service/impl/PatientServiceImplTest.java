@@ -1,6 +1,5 @@
 package com.jpacourse.service.impl;
 import com.jpacourse.dto.VisitTO;
-import com.jpacourse.persistance.dao.Dao;
 import com.jpacourse.persistance.dao.DoctorDao;
 import com.jpacourse.persistance.dao.PatientDao;
 import com.jpacourse.persistance.dao.VisitDao;
@@ -82,7 +81,6 @@ class PatientServiceImplTest {
         testPatient.setPatientNumber("P10001");
         testPatient.setDateOfBirth(LocalDate.of(1980, 1, 1));
         testPatient.setAddress(patientAddress);
-        testPatient.setIsInsured(true);
         patientDao.save(testPatient);
 
         // Create and save Visit

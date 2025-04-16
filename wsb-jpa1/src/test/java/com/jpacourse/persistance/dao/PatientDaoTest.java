@@ -5,14 +5,17 @@ import com.jpacourse.persistance.entity.DoctorEntity;
 import com.jpacourse.persistance.entity.PatientEntity;
 import com.jpacourse.persistance.entity.VisitEntity;
 import com.jpacourse.persistance.enums.Specialization;
-import com.jpacourse.service.PatientService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.dao.OptimisticLockingFailureException;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -26,6 +29,8 @@ public class PatientDaoTest {
     @Autowired
     private PatientDao patientDao;
 
+    @Autowired
+    private PlatformTransactionManager transactionManager;
 
     @Autowired
     private DoctorDao doctorDao;
@@ -56,7 +61,6 @@ public class PatientDaoTest {
         testPatient.setPatientNumber("P10001");
         testPatient.setDateOfBirth(LocalDate.of(1980, 1, 1));
         testPatient.setAddress(patientAddress);
-        testPatient.setIsInsured(true);
         patientDao.save(testPatient);
 
         // Create and save Doctor
@@ -94,7 +98,7 @@ public class PatientDaoTest {
 
     @Test
     @Transactional
-    public void testShouldFindByLastName(){
+    public void testShouldFindByLastName() {
         // given
         // when
         List<PatientEntity> patientEntity = patientDao.findByLastName("Kowalski");
@@ -104,7 +108,7 @@ public class PatientDaoTest {
 
     @Test
     @Transactional
-    public void testShouldFindMoreThanX(){
+    public void testShouldFindMoreThanX() {
         // given
 
         // when
@@ -115,7 +119,7 @@ public class PatientDaoTest {
 
     @Test
     @Transactional
-    public void testShouldFindAdultPatients(){
+    public void testShouldFindAdultPatients() {
         // given
         // when
         List<PatientEntity> patients = patientDao.findAdultPatients();
@@ -123,4 +127,34 @@ public class PatientDaoTest {
         assertThat(patients).isNotNull();
     }
 
+    @Test
+    @Transactional
+    public void testOptimisticLockingWithTryCatch() {
+        // Load the same entity twice to simulate concurrent access
+        PatientEntity p1 = patientDao.findOne(testPatient.getId());
+        PatientEntity p2 = patientDao.findOne(testPatient.getId());
+
+        System.out.println("Initial versions - p1: " + p1.getVersion() + ", p2: " + p2.getVersion());
+
+        // First update (should succeed)
+        p1.setFirstName("FirstUpdate");
+        patientDao.save(p1);
+        em.flush();
+        System.out.println("After first update - p1 version: " + p1.getVersion());
+
+        // Second update (should trigger optimistic lock)
+        p2.setFirstName("ConflictingUpdate");
+        try {
+            patientDao.save(p2);
+            em.flush();
+            System.out.println("Test FAILED: No exception was thrown");
+            System.out.println("Final p2 version: " + p2.getVersion());
+        }
+        catch (OptimisticLockingFailureException e) {
+            System.out.println("Test PASSED: Caught expected OptimisticLockingFailureException");
+        }
+        catch (Exception e) {
+            System.out.println("Test FAILED: Wrong exception type: " + e.getClass().getSimpleName());
+        }
+    }
 }

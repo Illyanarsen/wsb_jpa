@@ -78,6 +78,14 @@ public class PatientDaoImpl extends AbstractDao<PatientEntity, Long> implements 
                 .setParameter("adultDate", adultDate)
                 .getResultList();
     }
+    @Override
+    public PatientEntity save(PatientEntity entity){
+      if (entity.getId() == null) {
+        entityManager.persist(entity);  // For new entities
+        return entity;
+    } else {
+        return entityManager.merge(entity);  // For existing entities (enables optimistic locking)
+    }}
 
 
 

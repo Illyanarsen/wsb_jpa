@@ -26,6 +26,8 @@ public class PatientTO {
     private AddressTO address;
     private List<VisitTO> visits = new ArrayList<>();
     private Integer age;
+    @Version
+    private Long version;
 
     public Integer getAge() {
         return age;
@@ -107,13 +109,12 @@ public class PatientTO {
     public void addVisit(VisitTO visit) {
         this.visits.add(visit);
     }
-
-    public void setIsInsured(boolean isInsured) {
-        this.isInsured = isInsured;
+    public Long getVersion() {
+        return version;
     }
 
-    public boolean getIsInsured() {
-        return isInsured;
+    public void setVersion(Long version) {
+        this.version = version;
     }
 
 }

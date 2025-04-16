@@ -18,6 +18,9 @@ public class PatientEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
+	@Version
+	private Long version;
+
 	@Column(nullable = false)
 	private String firstName;
 
@@ -35,8 +38,7 @@ public class PatientEntity {
 
 	@Column(nullable = false)
 	private LocalDate dateOfBirth;
-	@Column(nullable = false)
-	private boolean isInsured;
+
 
 
 	// Dwustronna relacja: Pacjent jest właścicielem relacji
@@ -133,13 +135,12 @@ public class PatientEntity {
 	public List<VisitEntity> getVisits() {
 		return visits;
 	}
-	public void setIsInsured(boolean isInsured) {
-		this.isInsured = isInsured;
+
+	public Long getVersion() {
+		return version;
 	}
 
-	public boolean getIsInsured() {
-		return isInsured;
+	public void setVersion(Long version) {
+		this.version = version;
 	}
-
-
 }

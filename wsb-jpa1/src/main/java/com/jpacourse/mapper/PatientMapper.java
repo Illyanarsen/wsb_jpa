@@ -25,6 +25,7 @@ public class PatientMapper {
         patientTO.setPatientNumber(patientEntity.getPatientNumber());
         patientTO.setDateOfBirth(patientEntity.getDateOfBirth());
         patientTO.setAge(patientEntity.getAge());
+        patientTO.setVersion(patientEntity.getVersion());
 
         // Map Address using AddressMapper
         patientTO.setAddress(AddressMapper.mapToTO(patientEntity.getAddress()));
@@ -50,6 +51,7 @@ public class PatientMapper {
         patientEntity.setEmail(patientTO.getEmail());
         patientEntity.setPatientNumber(patientTO.getPatientNumber());
         patientEntity.setDateOfBirth(patientTO.getDateOfBirth());
+        patientEntity.setVersion(patientTO.getVersion());
 
         // Map Address back using AddressMapper
         patientEntity.setAddress(AddressMapper.mapToEntity(patientTO.getAddress()));
