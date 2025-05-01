@@ -1,5 +1,7 @@
 package com.jpacourse.service.impl;
 import com.jpacourse.dto.VisitTO;
+import com.jpacourse.mapper.PatientMapper;
+import com.jpacourse.mapper.VisitMapper;
 import com.jpacourse.persistance.dao.DoctorDao;
 import com.jpacourse.persistance.dao.PatientDao;
 import com.jpacourse.persistance.dao.VisitDao;
@@ -96,7 +98,7 @@ class PatientServiceImplTest {
         // Create and save Visit
         testVisit2 = new VisitEntity();
         testVisit2.setTime(LocalDateTime.now());
-        testVisit2.setDescription("Regular checkup");
+        testVisit2.setDescription("Regular checkup 2");
         testVisit2.setDoctor(testDoctor);
         testPatient.addVisit(testVisit2);
         visitDao.save(testVisit2);
@@ -123,6 +125,23 @@ class PatientServiceImplTest {
         assertThat(patientTO).isNotNull();
         assertThat(patientTO.getFirstName()).isEqualTo("Jan");
         assertThat(patientTO.getLastName()).isEqualTo("Kowalski");
+    }
+
+    @Test
+    public void testShouldFindAllVisitsByID(){
+        //given
+        Long existingPatientId = testPatient.getId();
+        PatientTO patientTO = PatientMapper.mapToTO(testPatient);
+        em.clear();
+        //when
+        List<VisitTO> visits = patientService.findAllVisitsById(existingPatientId);
+        List<Long> visitIds = patientTO.getVisits().stream()
+                .map(VisitTO::getId)
+                .toList();
+        //then
+        assertThat(visits).isNotNull();
+        assertThat(visitIds).contains(testVisit2.getId());
+        assertThat(patientTO.getVisits()).hasSize(2);
     }
 
     @Test

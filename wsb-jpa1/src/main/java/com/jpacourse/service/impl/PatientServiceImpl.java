@@ -1,4 +1,7 @@
 package com.jpacourse.service.impl;
+import com.jpacourse.dto.VisitTO;
+import com.jpacourse.mapper.VisitMapper;
+import com.jpacourse.persistance.entity.VisitEntity;
 import com.jpacourse.rest.exception.EntityNotFoundException;
 import com.jpacourse.dto.PatientTO;
 import com.jpacourse.mapper.PatientMapper;
@@ -35,6 +38,16 @@ public class PatientServiceImpl implements PatientService {
     public PatientTO findById(Long id) {
         final PatientEntity entity = patientDao.findOne(id);
         return PatientMapper.mapToTO(entity);
+    }
+
+    @Override
+    public List<VisitTO> findAllVisitsById (Long id){
+        List<VisitEntity> visits = patientDao.findPatientVisits(id);
+        List<VisitTO> visitsTO = new ArrayList<>();
+        for (int i = 0; i<visits.size(); i++) {
+            visitsTO.add(VisitMapper.mapToTO(visits.get(i)));
+        }
+        return visitsTO;
     }
 
     public void deletePatientWithCascade(Long patientId) {
